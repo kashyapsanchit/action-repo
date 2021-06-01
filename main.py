@@ -42,7 +42,7 @@ def gh_webhooks():
 
             return render_template('index.html', author = author, action=action, from_branch=from_branch, to_branch=to_branch, created_at= created_at )
             
-        if request.json['ref']:
+        elif request.json['ref']:
 
             data = dict(
             request_id = request.json['commits'][0]['id'],
