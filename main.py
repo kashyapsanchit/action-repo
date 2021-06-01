@@ -42,7 +42,7 @@ def gh_pull():
     print(author)
     return("Data added")
 
-
+#Comment was added 
 @app.route('/push_req', methods=['POST'])
 def gh_push():
     if request.headers["Content-Type"] == 'application/json':
