@@ -48,7 +48,7 @@ def gh_push():
     if request.headers["Content-Type"] == 'application/json':
         print(request.json)
         data = dict(
-            request_id = request.json['commits']['id'],
+            request_id = request.json.commits['id'],
             author = request.json["pusher"]['name'],
             action = "PUSH",
             timestamp = request.json['commits']['timestamp']

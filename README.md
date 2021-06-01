@@ -1,3 +1,3 @@
 # action-repo
 ### Whats up - Pull
-Added this 
+Added support for push requests
