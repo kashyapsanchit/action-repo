@@ -46,7 +46,7 @@ def gh_pull():
 @app.route('/push_req', methods=['POST'])
 def gh_push():
     if request.headers["Content-Type"] == 'application/json':
-        print(json.dump(request.json['commits']))
+        print(json.dumps(request.json['commits']))
         data = dict(
             request_id = request.json.commits['id'],
             author = request.json["pusher"]['name'],
