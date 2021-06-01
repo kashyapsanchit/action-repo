@@ -21,17 +21,17 @@ def gh_pull():
         # if request.json['action'] == 'opened':
         #     req_action = "PULL_REQUEST"
         
-        data = dict(
-            request_id = request.json['pull_request']['id'],
-            author = request.json["sender"]['login'],
-            action = request.json['action'],
-            from_branch = request.json['pull_request']["head"]["ref"],
-            to_branch = request.json['pull_request']['base']['ref'],
-            created_at = request.json['pull_request']['created_at'],
-            updated_at = request.json['pull_request']['updated_at']
-        )
+        # data = dict(
+        #     request_id = request.json['pull_request']['id'],
+        #     author = request.json["sender"]['login'],
+        #     action = request.json['action'],
+        #     from_branch = request.json['pull_request']["head"]["ref"],
+        #     to_branch = request.json['pull_request']['base']['ref'],
+        #     created_at = request.json['pull_request']['created_at'],
+        #     updated_at = request.json['pull_request']['updated_at']
+        # )
 
-        db.reqs.insert_one(data)
+        # db.reqs.insert_one(data)
         return("Success")
     
     return("Data added")
