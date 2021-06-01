@@ -51,7 +51,7 @@ def gh_push():
             request_id = request.json['commits'][0]['id'],
             author = request.json["pusher"]['name'],
             action = "PUSH",
-            timestamp = request.json['commits']['timestamp']
+            timestamp = request.json['commits'][0]['timestamp']
         )
 
         db.reqs.insert_one(data)
