@@ -16,30 +16,51 @@ def index():
 @app.route('/pull_req', methods=['POST'])
 def gh_pull():
     if request.headers["Content-Type"] == 'application/json':
-        print(request.json)
-
-        # if request.json['action'] == 'opened':
-        #     req_action = "PULL_REQUEST"
         
-        # data = dict(
-        #     request_id = request.json['pull_request']['id'],
-        #     author = request.json["sender"]['login'],
-        #     action = request.json['action'],
-        #     from_branch = request.json['pull_request']["head"]["ref"],
-        #     to_branch = request.json['pull_request']['base']['ref'],
-        #     created_at = request.json['pull_request']['created_at'],
-        #     updated_at = request.json['pull_request']['updated_at']
-        # )
+        req_action = request.json['action']
+        if request.json['action'] == 'opened':
+            req_action = "PULL_REQUEST"
+        elif request.json['action'] == 'closed':
+            req_action = "MERGE"
+        
+        data = dict(
+            request_id = request.json['pull_request']['id'],
+            author = request.json["sender"]['login'],
+            action = req_action,
+            from_branch = request.json['pull_request']["head"]["ref"],
+            to_branch = request.json['pull_request']['base']['ref'],
+            created_at = request.json['pull_request']['created_at'],
+            updated_at = request.json['pull_request']['updated_at']
+        )
 
-        # db.reqs.insert_one(data)
+        db.reqs.insert_one(data)
         return("Success")
-    
+
+    author = db.reqs["author"]
+    from_branch = db.reqs["from_branch"]
+    to_branch = db.reqs["to_branch"]
+    print(author)
     return("Data added")
 
 
-# @app.route('/push_req', methods=['POST'])
-# def gh_push():
-#     if request.headers["Content-Type"] == 'application/json':
+@app.route('/push_req', methods=['POST'])
+def gh_push():
+    if request.headers["Content-Type"] == 'application/json':
+        print(request.json)
+        data = dict(
+            request_id = request.json['commits']['id'],
+            author = request.json["pusher"]['name'],
+            action = "PUSH",
+            timestamp = request.json['commits']['timestamp']
+        )
+
+        db.reqs.insert_one(data)
+
+            
+        return("Success")
+
+    
+    return("Push Request")
 
 
 
