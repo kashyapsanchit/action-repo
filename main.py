@@ -1,86 +1,67 @@
-from flask import Flask, render_template
+from flask import Flask
 from flask import request
 import datetime
 from flask import json
 from flask_pymongo import PyMongo
-from bson.json_util import dumps, loads
 
-app = Flask(__name__, template_folder= 'template')
+app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://sanchit:sanchit@cluster0.sqntw.gcp.mongodb.net/action?retryWrites=true&w=majority"
 mongo = PyMongo(app)
 db = mongo.db
 
 @app.route('/')
 def index():
-    return("Webhooks")
+    return("Hahahah")
 
-@app.route('/github', methods=['GET' ,'POST'])
-def gh_webhooks():
+@app.route('/pull_req', methods=['POST'])
+def gh_pull():
     if request.headers["Content-Type"] == 'application/json':
         
-        if request.json['action']:
-            data = dict(
-                request_id = request.json['pull_request']['id'],
-                author = request.json["sender"]['login'],
-                action = "PULL_REQUEST",
-                from_branch = request.json['pull_request']["head"]["ref"],
-                to_branch = request.json['pull_request']['base']['ref'],
-                created_at = request.json['pull_request']['created_at'],
-                updated_at = request.json['pull_request']['updated_at']
-            )
-            db.reqs.insert_one(data)
+        req_action = request.json['action']
+        if request.json['action'] == 'opened':
+            req_action = "PULL_REQUEST"
+        
+        
+        data = dict(
+            request_id = request.json['pull_request']['id'],
+            author = request.json["sender"]['login'],
+            action = req_action,
+            from_branch = request.json['pull_request']["head"]["ref"],
+            to_branch = request.json['pull_request']['base']['ref'],
+            created_at = request.json['pull_request']['created_at'],
+            updated_at = request.json['pull_request']['updated_at']
+        )
 
-            cur = db.reqs.find()
-            data = dumps(list(cur))
-            d = loads(data)
-            print(d[-1])
-            author = d[-1]['author']
-            action = d[-1]['action']
-            from_branch = d[-1]['from_branch']
-            to_branch = d[-1]['to_branch']
-            created_at = d[-1]['created_at']
+        db.reqs.insert_one(data)
+        return("Success")
 
-            return render_template('index.html', author = author, action=action, from_branch=from_branch, to_branch=to_branch, created_at= created_at )
-            
-        elif request.json['ref']:
+    author = db.reqs["author"]
+    from_branch = db.reqs["from_branch"]
+    to_branch = db.reqs["to_branch"]
+    print(author)
+    return("Data added")
 
-            data = dict(
+
+@app.route('/push_req', methods=['POST'])
+def gh_push():
+    if request.headers["Content-Type"] == 'application/json':
+
+        data = dict(
             request_id = request.json['commits'][0]['id'],
             author = request.json["pusher"]['name'],
             action = "PUSH",
-            to_branch= str(request.json["ref"]).split('/')[2],
+            to_branch = str(request.json['ref']).split('/')[2],
             timestamp = request.json['commits'][0]['timestamp']
-            )   
+        )
 
-            db.reqs.insert_one(data)
+        db.reqs.insert_one(data)
 
-            cur = db.reqs.find()
-            data = dumps(list(cur))
-            d = loads(data)
-            print(d[-1])
-            author = d[-1]['author']
-            action = d[-1]['action']
-            to_branch = d[-1]['to_branch']
-            timestamp = d[-1]['timestamp']
+            
+        return("Success")
+
     
-            return render_template('index.html', author = author, action=action, to_branch=to_branch, timestamp= timestamp )
+    return("Push Request")
 
-        
-    return("Success")
-
-        
-#         return render_template('index.html', author = author, action=action, from_branch=from_branch, to_branch=to_branch, created_at= created_at )
-#     return("Success")
-
-
-# @app.route('/push_req', methods=['POST'])
-# def gh_push():
-#     if request.headers["Content-Type"] == 'application/json':
-        
-        
-#     if request.method == "GET":
-
-#     return("Push Request")
 
 
 
