@@ -17,7 +17,7 @@ def index():
 def gh_pull():
     if request.headers["Content-Type"] == 'application/json':
         
-        req_action = request.json['action']
+        
         if request.json['action'] == 'opened':
             req_action = "PULL_REQUEST"
         elif request.json['action'] == 'closed':
@@ -55,6 +55,7 @@ def gh_push():
         )
 
         db.reqs.insert_one(data)
+        print(db.reqs['action'])
 
             
         return("Success")
